@@ -1,6 +1,6 @@
 # havlu
 
-Havlu lets you focus on the frontend by making it effortless to have a custom REST. You give the JSON, it gives you the REST. Fast, easy, and reliable. You can self-host it, easily deploy it to somewhere, or use it as a Docker container.
+Havlu lets you focus on the frontend by making it effortless to have a custom REST. You give the JSON, it gives you the REST API. Fast, easy, and reliable. You can self-host it, easily deploy it to somewhere, or use it as a Docker container.
 
 One of the amazing things about havlu is that it can create a custom REST API with a model that you already have.
 
