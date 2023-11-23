@@ -41,9 +41,13 @@ func read(path string) *Source {
 	return &Source{data: jsonMap}
 }
 
-func serve(s Source, host string, port string) {
+func serve(s Source, host string, port string, queit bool) {
 	// todo: syncronize data access with mutex or channels
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if !queit {
+			log.Printf("%s %s", r.Method, r.URL.Path)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 
 		path := r.URL.Path[1:]
@@ -98,14 +102,20 @@ func main() {
 				Value:   "0",
 				Aliases: []string{"d"},
 			},
+			&cli.StringFlag{
+				Name:    "quiet",
+				Usage:   "suppress log messages from output",
+				Aliases: []string{"q"},
+			},
 		},
 		Action: func(c *cli.Context) error {
 			host := c.String("host")
 			port := c.String("port")
 			file := c.String("file")
+			quiet := c.Bool("quiet")
 
 			data := read(file)
-			serve(*data, host, port)
+			serve(*data, host, port, quiet)
 			return nil
 		},
 	}
