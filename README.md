@@ -2,11 +2,13 @@
 
 Havlu lets you focus on the frontend by making it effortless to have a custom REST. You give the JSON, it gives you the REST API. Fast, easy, and reliable. You can self-host it, easily deploy it to somewhere, or use it as a Docker container.
 
-One of the amazing things about havlu is that it can create a custom REST API with a model that you already have.
+<!-- One of the amazing things about havlu is that it can create a custom REST API with a model that you already have. -->
 
 ## Motivation
 
 When you are developing a frontend application, you need a backend to serve your data. You can use a mock server, but it is not always enough. You may need to have a custom REST API. Havlu is a tool that helps you to create a custom REST API with a JSON file.
+
+However, havlu is not offering a new approach for existing tools like `json-server`. It does the same thing but faster. Why not?
 
 ## Installation
 
@@ -85,7 +87,40 @@ todo!
 
 ## Examples
 
-(todo!)
+```json
+{
+  "locations": [
+    {
+      "city": "New York"
+    },
+    {
+      "city": "Izmir"
+    },
+    {
+      "city": "Oslo"
+    },
+    {
+      "city": "Beijing"
+    },
+    {
+      "city": "Tokyo"
+    }
+  ]
+}
+```
+
+```bash
+havlu --file data.json --port 3000
+```
+
+It will create a REST API with the following endpoints.
+
+```bash
+GET /locations
+GET /locations?city=Tokyo
+GET /locations?order=city&sort=desc
+
+```
 
 ## License
 

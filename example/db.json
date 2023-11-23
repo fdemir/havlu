@@ -1,19 +1,27 @@
 {
-  "posts": [
+  "locations": [
     {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
+      "city": "New York"
+    },
+    {
+      "city": "Izmir"
+    },
+    {
+      "city": "Oslo"
+    },
+    {
+      "city": "Beijing"
+    },
+    {
+      "city": "Tokyo"
     }
   ],
-  "comments": [
+  "names": [
     {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
+      "name": "Furkan"
+    },
+    {
+      "name": "Ata"
     }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }
