@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -21,27 +19,19 @@ func read(path string) *Source {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer file.Close()
-
-	result := bytes.NewBuffer(nil)
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		result.Write(scanner.Bytes())
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
 
 	jsonMap := make(map[string]interface{})
 
-	json.Unmarshal(result.Bytes(), &jsonMap)
+	if err = json.NewDecoder(file).Decode(&jsonMap); err != nil {
+		log.Fatal(err)
+	}
 
 	return &Source{data: jsonMap}
 }
 
-func serve(s Source, host string, port string, queit bool) {
+func serve(s *Source, host string, port string, queit bool) {
 	// todo: syncronize data access with mutex or channels
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if !queit {
@@ -115,7 +105,7 @@ func main() {
 			quiet := c.Bool("quiet")
 
 			data := read(file)
-			serve(*data, host, port, quiet)
+			serve(data, host, port, quiet)
 			return nil
 		},
 	}
