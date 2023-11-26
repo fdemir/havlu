@@ -118,9 +118,9 @@ It will create a REST API with the following endpoints.
 ```bash
 GET /locations
 GET /locations?city=Tokyo
-GET /locations?order=city&sort=desc
 
 ```
+<!-- GET /locations?order=city&sort=desc -->
 
 ## License
 

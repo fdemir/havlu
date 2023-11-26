@@ -48,10 +48,25 @@ func serve(s *Source, host string, port string, queit bool) {
 			return
 		}
 
-		json.NewEncoder(w).Encode(response)
+		params := r.URL.Query()
+		result := []interface{}{}
+
+		if len(params) > 0 {
+			for _, item := range response.([]interface{}) {
+				for key, value := range params {
+					if item.(map[string]interface{})[key] == value[0] {
+						result = append(result, item)
+					}
+				}
+			}
+		} else {
+			result = response.([]interface{})
+		}
+
+		json.NewEncoder(w).Encode(result)
 	})
 
-	fmt.Printf("Listening on %s:%s\n", host, port)
+	fmt.Printf("Havlu is on. Listening on %s:%s!\n", host, port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", host, port), nil))
 
 }

@@ -1,18 +1,23 @@
 {
   "locations": [
     {
+      "fav": true,
       "city": "New York"
     },
     {
+      "fav": false,
       "city": "Izmir"
     },
     {
+      "fav": false,
       "city": "Oslo"
     },
     {
+      "fav": true,
       "city": "Beijing"
     },
     {
+      "fav": true,
       "city": "Tokyo"
     }
   ],
