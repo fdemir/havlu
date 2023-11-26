@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/urfave/cli/v2"
 )
@@ -48,17 +49,57 @@ func serve(s *Source, host string, port string, queit bool) {
 			return
 		}
 
-		params := r.URL.Query()
+		// unmarshal query params
 		result := []interface{}{}
+		params := r.URL.Query()
+
+		limit, err := strconv.Atoi(params.Get("_limit"))
+		if err != nil {
+			// do nothing
+			limit = 0
+		}
 
 		if len(params) > 0 {
+
+			count := 0
+
 			for _, item := range response.([]interface{}) {
+				if count >= limit {
+					break
+				}
+
+				shouldAdd := true
+				item := item.(map[string]interface{})
+
 				for key, value := range params {
-					if item.(map[string]interface{})[key] == value[0] {
-						result = append(result, item)
+
+					// if params params does start with underscore, skip
+					if key[0] == '_' {
+						continue
+					}
+
+					if intValue, err := strconv.Atoi(value[0]); err == nil {
+						if item[key] != intValue {
+							shouldAdd = false
+						}
+					} else if boolValue, err := strconv.ParseBool(value[0]); err == nil {
+						if item[key] != boolValue {
+							shouldAdd = false
+						}
+					} else {
+						if item[key] != value[0] {
+							shouldAdd = false
+						}
 					}
 				}
+
+				if shouldAdd {
+					result = append(result, item)
+				}
+
+				count += 1
 			}
+
 		} else {
 			result = response.([]interface{})
 		}
