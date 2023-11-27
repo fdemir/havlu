@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/urfave/cli/v2"
 )
@@ -49,22 +50,15 @@ func serve(s *Source, host string, port string, queit bool) {
 			return
 		}
 
-		// unmarshal query params
 		result := []interface{}{}
 		params := r.URL.Query()
-
-		limit, err := strconv.Atoi(params.Get("_limit"))
-		if err != nil {
-			// do nothing
-			limit = 0
-		}
+		limit, _ := strconv.Atoi(params.Get("_limit"))
 
 		if len(params) > 0 {
-
 			count := 0
 
 			for _, item := range response.([]interface{}) {
-				if count >= limit {
+				if limit > 0 && count >= limit {
 					break
 				}
 
@@ -74,7 +68,7 @@ func serve(s *Source, host string, port string, queit bool) {
 				for key, value := range params {
 
 					// if params params does start with underscore, skip
-					if key[0] == '_' {
+					if strings.HasPrefix(key, "_") {
 						continue
 					}
 
