@@ -1,4 +1,4 @@
-module fdemir/havlu
+module github.com/fdemir/havlu
 
 go 1.21.4
 
