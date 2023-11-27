@@ -110,8 +110,7 @@ func main() {
 		Name:      "havlu",
 		HelpName:  "havlu",
 		Usage:     "Get a full take mock REST API with zero coding.",
-		Version:   "0.0.1",
-		UsageText: "havlu [global options]",
+		UsageText: "havlu [file] [global options]",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "port",
@@ -150,8 +149,9 @@ func main() {
 		Action: func(c *cli.Context) error {
 			host := c.String("host")
 			port := c.String("port")
-			file := c.String("file")
 			quiet := c.Bool("quiet")
+
+			file := c.Args().First()
 
 			if file == "" {
 				return cli.Exit("File name is required.", 1)

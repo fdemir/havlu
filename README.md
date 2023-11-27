@@ -54,6 +54,8 @@ havlu --file data.json --port 3000
 
 The JSON file should be an array of objects. Each object represents a resource. The key of the object is the resource name. The value of the object is an array of objects. Each object represents a resource item. The key of the object is the resource item id. The value of the object is the resource item.
 
+`db.json`
+
 ```json
 [
   {
@@ -71,6 +73,12 @@ The JSON file should be an array of objects. Each object represents a resource. 
     ]
   }
 ]
+```
+
+Run havlu with the following command.
+
+```bash
+havlu db.json
 ```
 
 ## Using as Module
