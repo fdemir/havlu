@@ -12,28 +12,24 @@ However, havlu is not offering a new approach for existing tools like `json-serv
 
 ## Installation
 
-MacOS
+<!-- MacOS
 
 ```bash
 brew install havlu
-```
+``` -->
 
-Linux
-
-```bash
-todo!
-```
-
-Windows
+Go
 
 ```bash
-todo!
+go install github.com/fdemir/havlu@latest
 ```
 
-Docker
+Source
 
 ```bash
-todo!
+git clone
+cd havlu
+go install
 ```
 
 ## Usage
@@ -120,6 +116,7 @@ GET /locations
 GET /locations?city=Tokyo
 
 ```
+
 <!-- GET /locations?order=city&sort=desc -->
 
 ## License
