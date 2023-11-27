@@ -42,7 +42,6 @@ havlu data.json --port 3000
 
 | Option    | Description                    | Default   |
 | --------- | ------------------------------ | --------- |
-| --file    | Path to the JSON file          | data.json |
 | --port    | Port number                    | 3000      |
 | --host    | Host name                      | localhost |
 | --cors    | Enable CORS                    | false     |
