@@ -35,7 +35,7 @@ go install
 ## Usage
 
 ```bash
-havlu --file data.json --port 3000
+havlu data.json --port 3000
 ```
 
 ## Options
