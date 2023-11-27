@@ -44,15 +44,14 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
-brews:
-  - repository:
-      owner: fdemir
-      name: homebrew-tap
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-    folder: Formula
-    description: "Havlu lets you focus on the frontend by making it effortless to have a custom API."
-    license: "MIT"
-    install: |
-      bin.install "git-switcher"
+# brews:
+#   - repository:
+#       owner: fdemir
+#       name: homebrew-tap
+#       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+#     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+#     folder: Formula
+#     description: "Havlu lets you focus on the frontend by making it effortless to have a custom API."
+#     license: "MIT"
+#     install: |
+#       bin.install "git-switcher"
