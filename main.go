@@ -67,7 +67,6 @@ func serve(s *Source, host string, port string, queit bool) {
 
 				for key, value := range params {
 
-					// if params params does start with underscore, skip
 					if strings.HasPrefix(key, "_") {
 						continue
 					}
@@ -153,6 +152,10 @@ func main() {
 			port := c.String("port")
 			file := c.String("file")
 			quiet := c.Bool("quiet")
+
+			if file == "" {
+				return cli.Exit("File name is required.", 1)
+			}
 
 			data := read(file)
 			serve(data, host, port, quiet)
