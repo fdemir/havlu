@@ -60,14 +60,12 @@ The JSON file should be an array of objects. Each object represents a resource. 
   {
     "users": [
       {
-        "1": {
-          "id": 1,
-          "name": "John Doe"
-        },
-        "2": {
-          "id": 2,
-          "name": "Jane Doe"
-        }
+        "id": 1,
+        "name": "Furkan Demir"
+      },
+      {
+        "id": 2,
+        "name": "John Doe"
       }
     ]
   }
@@ -80,48 +78,18 @@ Run havlu with the following command.
 havlu db.json
 ```
 
+It will create a REST API for the `users` resource.
+
+```bash
+GET    /users
+```
+
 ## Using as Module
 
 You can adapt havlu to your own server by using it as a module.
 
 ```go
 todo!
-```
-
-## Examples
-
-```json
-{
-  "locations": [
-    {
-      "city": "New York"
-    },
-    {
-      "city": "Izmir"
-    },
-    {
-      "city": "Oslo"
-    },
-    {
-      "city": "Beijing"
-    },
-    {
-      "city": "Tokyo"
-    }
-  ]
-}
-```
-
-```bash
-havlu --file data.json --port 3000
-```
-
-It will create a REST API with the following endpoints.
-
-```bash
-GET /locations
-GET /locations?city=Tokyo
-
 ```
 
 <!-- GET /locations?order=city&sort=desc -->
