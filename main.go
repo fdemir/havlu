@@ -9,11 +9,19 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/urfave/cli/v2"
 )
 
 type Source struct {
 	data map[string]interface{}
+}
+
+type ServeOptions struct {
+	host   string
+	port   string
+	queit  bool
+	noCors bool
 }
 
 func read(path string) *Source {
@@ -33,14 +41,19 @@ func read(path string) *Source {
 	return &Source{data: jsonMap}
 }
 
-func serve(s *Source, host string, port string, queit bool) {
+func serve(s *Source, opt *ServeOptions) {
 	// todo: syncronize data access with mutex or channels
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if !queit {
+		if !opt.queit {
 			log.Printf("%s %s", r.Method, r.URL.Path)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Methods", "GET")
+
+		if !opt.noCors {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+		}
 
 		path := r.URL.Path[1:]
 		response := s.data[path]
@@ -100,8 +113,8 @@ func serve(s *Source, host string, port string, queit bool) {
 		json.NewEncoder(w).Encode(result)
 	})
 
-	fmt.Printf("Havlu is on. Listening on %s:%s!\n", host, port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", host, port), nil))
+	fmt.Println(color.GreenString("Havlu is on. Listening on %s:%s!\n", opt.host, opt.port))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", opt.host, opt.port), nil))
 
 }
 
@@ -117,11 +130,6 @@ func main() {
 				Aliases: []string{"p"},
 				Value:   "3000",
 				Usage:   "port number",
-			},
-			&cli.StringFlag{
-				Name:    "file",
-				Aliases: []string{"f"},
-				Usage:   "file name",
 			},
 			&cli.StringFlag{
 				Name:    "host",
@@ -145,11 +153,17 @@ func main() {
 				Usage:   "suppress log messages from output",
 				Aliases: []string{"q"},
 			},
+			&cli.BoolFlag{
+				Name:    "no-cors",
+				Usage:   "disable CORS headers",
+				Aliases: []string{"nc"},
+			},
 		},
 		Action: func(c *cli.Context) error {
 			host := c.String("host")
 			port := c.String("port")
 			quiet := c.Bool("quiet")
+			noCors := c.Bool("no-cors")
 
 			file := c.Args().First()
 
@@ -158,7 +172,15 @@ func main() {
 			}
 
 			data := read(file)
-			serve(data, host, port, quiet)
+
+			opt := &ServeOptions{
+				host:   host,
+				port:   port,
+				queit:  quiet,
+				noCors: noCors,
+			}
+
+			serve(data, opt)
 			return nil
 		},
 	}
