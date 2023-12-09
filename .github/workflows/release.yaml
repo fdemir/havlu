@@ -28,3 +28,4 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          TAP_TOKEN: ${{ secrets.TAP_TOKEN }}
