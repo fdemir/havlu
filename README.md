@@ -10,11 +10,11 @@ However, havlu is not offering a new approach for existing tools like `json-serv
 
 ## Installation
 
-<!-- MacOS
+Mac OS
 
 ```bash
-brew install havlu
-``` -->
+brew install fdemir/tap/havlu
+```
 
 Go
 
