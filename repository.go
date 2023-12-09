@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/url"
 	"strconv"
@@ -11,14 +10,14 @@ import (
 
 func GetAll(
 	params url.Values,
-	collection []interface{},
+	collection *[]interface{},
 ) []interface{} {
 	result := []interface{}{}
 	limit, _ := strconv.Atoi(params.Get("_limit"))
 
 	if len(params) > 0 {
 		count := 0
-		for _, item := range collection {
+		for _, item := range *collection {
 			hasLimitReached := limit > 0 && count >= limit
 
 			if hasLimitReached {
@@ -56,7 +55,7 @@ func GetAll(
 			count += 1
 		}
 	} else {
-		result = collection
+		result = *collection
 	}
 
 	return result
@@ -68,16 +67,8 @@ func Create(
 ) error {
 	var body map[string]interface{}
 
-	err := json.NewDecoder(payload).Decode(&body)
-	if err != nil {
+	if err := json.NewDecoder(payload).Decode(&body); err != nil {
 		return err
-	}
-
-	for _, item := range *collection {
-		item := item.(map[string]interface{})
-		if item["id"] == body["id"] {
-			return fmt.Errorf("id already exists")
-		}
 	}
 
 	*collection = append(*collection, body)

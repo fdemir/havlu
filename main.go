@@ -12,7 +12,7 @@ import (
 )
 
 type Source struct {
-	data map[string]interface{}
+	data map[string]*[]interface{}
 }
 
 type ServeOptions struct {
@@ -30,7 +30,7 @@ func read(path string) *Source {
 
 	defer file.Close()
 
-	jsonMap := make(map[string]interface{})
+	jsonMap := make(map[string]*[]interface{})
 
 	if err = json.NewDecoder(file).Decode(&jsonMap); err != nil {
 		log.Fatal(err)

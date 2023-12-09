@@ -21,7 +21,6 @@ func HandleBase(w http.ResponseWriter, r *http.Request, s *Source, opt *ServeOpt
 
 	path := r.URL.Path[1:]
 	response := s.data[path]
-	collection := response.([]interface{})
 
 	if response == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -32,24 +31,23 @@ func HandleBase(w http.ResponseWriter, r *http.Request, s *Source, opt *ServeOpt
 	case http.MethodGet:
 		data := GetAll(
 			r.URL.Query(),
-			collection,
+			response,
 		)
 
 		json.NewEncoder(w).Encode(data)
 	case http.MethodPost:
 		Create(
 			r.Body,
-			&collection,
+			response,
 		)
 
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(r.Body)
 	case http.MethodDelete:
 		id := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
 
 		Delete(
 			id,
-			&collection,
+			response,
 		)
 
 		w.WriteHeader(http.StatusNoContent)
