@@ -42,7 +42,6 @@ func read(path string) *Source {
 }
 
 func serve(s *Source, opt *ServeOptions) {
-	// todo: syncronize data access with mutex or channels
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if !opt.queit {
 			log.Printf("%s %s", r.Method, r.URL.Path)
@@ -63,54 +62,100 @@ func serve(s *Source, opt *ServeOptions) {
 			return
 		}
 
-		result := []interface{}{}
-		params := r.URL.Query()
-		limit, _ := strconv.Atoi(params.Get("_limit"))
+		if r.Method == "GET" {
 
-		if len(params) > 0 {
-			count := 0
+			result := []interface{}{}
+			params := r.URL.Query()
+			limit, _ := strconv.Atoi(params.Get("_limit"))
 
-			for _, item := range response.([]interface{}) {
-				if limit > 0 && count >= limit {
-					break
-				}
+			if len(params) > 0 {
+				count := 0
 
-				shouldAdd := true
-				item := item.(map[string]interface{})
+				for _, item := range response.([]interface{}) {
+					hasLimitReached := limit > 0 && count >= limit
 
-				for key, value := range params {
-
-					if strings.HasPrefix(key, "_") {
-						continue
+					if hasLimitReached {
+						break
 					}
 
-					if intValue, err := strconv.Atoi(value[0]); err == nil {
-						if item[key] != intValue {
-							shouldAdd = false
+					shouldAdd := true
+					item := item.(map[string]interface{})
+
+					for key, value := range params {
+
+						if strings.HasPrefix(key, "_") {
+							continue
 						}
-					} else if boolValue, err := strconv.ParseBool(value[0]); err == nil {
-						if item[key] != boolValue {
-							shouldAdd = false
-						}
-					} else {
-						if item[key] != value[0] {
-							shouldAdd = false
+
+						if intValue, err := strconv.Atoi(value[0]); err == nil {
+							if item[key] != intValue {
+								shouldAdd = false
+							}
+						} else if boolValue, err := strconv.ParseBool(value[0]); err == nil {
+							if item[key] != boolValue {
+								shouldAdd = false
+							}
+						} else {
+							if item[key] != value[0] {
+								shouldAdd = false
+							}
 						}
 					}
-				}
 
-				if shouldAdd {
-					result = append(result, item)
-				}
+					if shouldAdd {
+						result = append(result, item)
+					}
 
-				count += 1
+					count += 1
+				}
+			} else {
+				result = response.([]interface{})
 			}
 
+			json.NewEncoder(w).Encode(result)
+		} else if r.Method == "POST" {
+			var body map[string]interface{}
+
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			// check if id is already exists
+
+			for _, item := range response.([]interface{}) {
+				item := item.(map[string]interface{})
+				if item["id"] == body["id"] {
+					w.WriteHeader(http.StatusConflict)
+					return
+				}
+			}
+
+			response = append(response.([]interface{}), body)
+			s.data[path] = response
+
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(body)
+		} else if r.Method == "DELETE" {
+			// example path: /posts/1
+			id := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
+
+			idInt, _ := strconv.Atoi(id)
+
+			for index, item := range response.([]interface{}) {
+				item := item.(map[string]interface{})
+				if item["id"] == idInt {
+					response = append(response.([]interface{})[:index], response.([]interface{})[index+1:]...)
+					s.data[path] = response
+					break
+				}
+			}
+
+			w.WriteHeader(http.StatusNoContent)
 		} else {
-			result = response.([]interface{})
+			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 
-		json.NewEncoder(w).Encode(result)
 	})
 
 	fmt.Println(color.GreenString("Havlu is on. Listening on %s:%s!\n", opt.host, opt.port))

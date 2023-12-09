@@ -28,5 +28,15 @@
     {
       "name": "Ata"
     }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    },
+    {
+      "id": 2,
+      "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    }
   ]
 }
