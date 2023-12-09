@@ -11,6 +11,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 type Source struct {
 	data map[string]*[]interface{}
 }
@@ -50,11 +56,13 @@ func serve(s *Source, opt *ServeOptions) {
 }
 
 func main() {
+
 	app := &cli.App{
 		Name:      "havlu",
 		HelpName:  "havlu",
 		Usage:     "Get a full take mock REST API with zero coding.",
 		UsageText: "havlu [file] [global options]",
+		Version:   version,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "port",
