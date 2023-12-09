@@ -59,11 +59,13 @@ The JSON file should be an array of objects. Each object represents a resource. 
     "users": [
       {
         "id": 1,
-        "name": "Furkan Demir"
+        "name": "Furkan Demir",
+        "gender": "G",
       },
       {
         "id": 2,
-        "name": "John Doe"
+        "name": "John Doe",
+        "gender": "B"
       }
     ]
   }
@@ -82,6 +84,7 @@ It will create a REST API for the `users` resource.
 GET    /users
 POST /users
 DELETE /users/2
+GET /users?gender=B
 ```
 
 ## Using as Module
