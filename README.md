@@ -102,8 +102,8 @@ It will create a REST API for the `users` resource.
 ```bash
 GET    /users
 POST /users
-DELETE /users/2
-GET /users?gender=B
+DELETE /users/:id
+GET /users?field=value
 ```
 
 ## Using as Module
