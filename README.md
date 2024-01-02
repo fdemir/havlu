@@ -50,6 +50,8 @@ havlu data.json --port 3000
 ## Hav File
 
 Hav is a simple schema file that defines the entities(resources) and their fake data types. It helps you create mock APIs faster. Here is an example:
+
+example.hav
 ```
 entity user {
   name Person.Name
