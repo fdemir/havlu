@@ -47,6 +47,21 @@ havlu data.json --port 3000
 | --help    | Show help                      |           |
 | --version | Show version number            |           |
 
+## Hav File
+
+Hav is a simple schema file that defines the entities(resources) and their fake data types. It helps you create mock APIs faster. Here is an example:
+```
+	entity user {
+		name Person.Name
+		email Internet.Email
+	}
+	
+	entity address {
+		lat Address.Latitude
+		lon Address.Longitude
+	}
+```
+
 ## JSON File
 
 The JSON file should be an array of objects. Each object represents a resource. The key of the object is the resource name. The value of the object is an array of objects. Each object represents a resource item. The key of the object is the resource item id. The value of the object is the resource item.

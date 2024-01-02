@@ -1,0 +1,18 @@
+	entity user {
+		name Person.Name
+		email Internet.Email
+	}
+	
+	entity product {
+		id Beer.Alcohol
+		name Car.Model
+	}
+
+	entity address {
+		x Address.Address
+		y Address.Address
+		city Address.City
+		state Address.State
+		lat Address.Latitude
+		lon Address.Longitude
+	}

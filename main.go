@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/fatih/color"
 	"github.com/urfave/cli/v2"
@@ -110,7 +111,27 @@ func main() {
 				return cli.Exit("File name is required.", 1)
 			}
 
-			data := read(file)
+			extension := filepath.Ext(file)
+			var data *Source
+
+			switch extension {
+			case ".json":
+				data = read(file)
+			case ".hav":
+				f, err := os.Open(file)
+
+				if err != nil {
+					log.Fatal(err)
+				}
+				result := Generate(f)
+
+				data = &Source{data: result}
+
+				defer f.Close()
+
+			default:
+				return cli.Exit("File extension must be .json", 1)
+			}
 
 			opt := &ServeOptions{
 				host:   host,
