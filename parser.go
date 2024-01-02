@@ -68,8 +68,6 @@ func parseSource(src io.Reader) []Entity {
 		case currentAttribute != nil && currentAttribute.Type == "":
 			currentAttribute.Type = text
 
-			// is valid faker method
-
 			typeParts := strings.Split(currentAttribute.Type, ".")
 
 			if len(typeParts) == 2 {
@@ -106,8 +104,10 @@ func generateFake(entities []Entity) map[string]*[]interface{} {
 	fakerValue := reflect.ValueOf(fake)
 
 	for _, entity := range entities {
+		lowercasedEntityName := strings.ToLower(entity.Name)
+
 		entityResults := make([]interface{}, 0, RECORD_COUNT)
-		resultList[entity.Name] = &entityResults
+		resultList[lowercasedEntityName] = &entityResults
 
 		for i := 0; i < RECORD_COUNT; i++ {
 			fakeValues := make(map[string]any)
@@ -126,7 +126,7 @@ func generateFake(entities []Entity) map[string]*[]interface{} {
 				fakeValues[attr.Name] = method.Call([]reflect.Value{})[0].Interface()
 			}
 
-			*resultList[entity.Name] = append(*resultList[entity.Name], fakeValues)
+			*resultList[lowercasedEntityName] = append(*resultList[lowercasedEntityName], fakeValues)
 		}
 	}
 
