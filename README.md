@@ -62,6 +62,8 @@ entity address {
 }
 ```
 
+It uses [Faker](https://pkg.go.dev/github.com/jaswdr/faker#section-documentation) under the hood. You can use the any available methods as a data type. Like the following `Person.Name` or `Address.Latitude`.
+
 ## JSON File
 
 The JSON file should be an array of objects. Each object represents a resource. The key of the object is the resource name. The value of the object is an array of objects. Each object represents a resource item. The key of the object is the resource item id. The value of the object is the resource item.
