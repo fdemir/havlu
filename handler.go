@@ -13,7 +13,7 @@ func HandleBase(w http.ResponseWriter, r *http.Request, s *Source, opt *ServeOpt
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE")
 
 	if !opt.noCors {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
