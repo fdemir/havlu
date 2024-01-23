@@ -154,13 +154,11 @@ func generateFake(entities []Entity) map[string]*[]interface{} {
 		}(entity)
 	}
 
-	// Close the channel after all goroutines are done
 	go func() {
 		wg.Wait()
 		close(resultsChan)
 	}()
 
-	// Collect results
 	for result := range resultsChan {
 		resultList[result.EntityName] = result.Data
 	}
