@@ -22,6 +22,22 @@ func HandleBase(w http.ResponseWriter, r *http.Request, s *Source, opt *ServeOpt
 	path := r.URL.Path[1:]
 	response := s.data[path]
 
+	if path == "" {
+		availableRoutes := make([]string, 0, len(s.data))
+
+		for k := range s.data {
+			availableRoutes = append(availableRoutes, k)
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"availableRoutes": availableRoutes,
+			},
+		)
+
+		return
+	}
+
 	if response == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
