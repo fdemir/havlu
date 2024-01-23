@@ -11,6 +11,7 @@ import (
 	"io"
 	"reflect"
 	"strings"
+	"sync"
 	"text/scanner"
 	"unicode"
 
@@ -18,6 +19,7 @@ import (
 )
 
 const RECORD_COUNT = 10
+const IMAGE_METHOD_KEY = "Person.Image.Name.Image.Name"
 
 type Attribute struct {
 	Name string
@@ -95,39 +97,72 @@ func parseSource(src io.Reader) []Entity {
 	return entities
 }
 
+type entityResult struct {
+	EntityName string
+	Data       *[]interface{}
+}
+
+// TODO: Map the all available funcitons instead of using reflection. Reflection is performance killer.
 func generateFake(entities []Entity) map[string]*[]interface{} {
 	resultList := make(map[string]*[]interface{})
-
 	fake := faker.New()
-
 	methodCache := make(map[string]reflect.Value)
 	fakerValue := reflect.ValueOf(fake)
 
+	var wg sync.WaitGroup
+	resultsChan := make(chan entityResult, len(entities))
+
 	for _, entity := range entities {
-		lowercasedEntityName := strings.ToLower(entity.Name)
+		wg.Add(1)
+		go func(entity Entity) {
+			defer wg.Done()
+			lowercasedEntityName := strings.ToLower(entity.Name)
+			entityResults := make([]interface{}, 0, RECORD_COUNT)
 
-		entityResults := make([]interface{}, 0, RECORD_COUNT)
-		resultList[lowercasedEntityName] = &entityResults
+			for i := 0; i < RECORD_COUNT; i++ {
+				fakeValues := make(map[string]any)
 
-		for i := 0; i < RECORD_COUNT; i++ {
-			fakeValues := make(map[string]any)
+				for _, attr := range entity.Attributes {
+					methodKey := attr.Type
+					method, exists := methodCache[methodKey]
 
-			for _, attr := range entity.Attributes {
-				methodKey := attr.Type
-				method, exists := methodCache[methodKey]
+					if !exists {
+						typeParts := strings.Split(attr.Type, ".")
+						method = fakerValue.MethodByName(typeParts[0])
 
-				if !exists {
-					typeParts := strings.Split(attr.Type, ".")
-					fakerMethod := fakerValue.MethodByName(typeParts[0])
-					method = fakerMethod.Call([]reflect.Value{})[0].MethodByName(typeParts[1])
-					methodCache[methodKey] = method
+						for _, part := range typeParts[1:] {
+							method = method.Call([]reflect.Value{})[0].MethodByName(part)
+							methodKey += "." + part
+						}
+
+						methodCache[methodKey] = method
+					}
+
+					result := method.Call([]reflect.Value{})[0].Interface()
+
+					if methodKey == IMAGE_METHOD_KEY {
+						result = strings.Split(result.(string), "/")[2]
+					}
+
+					fakeValues[attr.Name] = result
 				}
 
-				fakeValues[attr.Name] = method.Call([]reflect.Value{})[0].Interface()
+				entityResults = append(entityResults, fakeValues)
 			}
 
-			*resultList[lowercasedEntityName] = append(*resultList[lowercasedEntityName], fakeValues)
-		}
+			resultsChan <- entityResult{EntityName: lowercasedEntityName, Data: &entityResults}
+		}(entity)
+	}
+
+	// Close the channel after all goroutines are done
+	go func() {
+		wg.Wait()
+		close(resultsChan)
+	}()
+
+	// Collect results
+	for result := range resultsChan {
+		resultList[result.EntityName] = result.Data
 	}
 
 	return resultList

@@ -38,6 +38,15 @@ func HandleBase(w http.ResponseWriter, r *http.Request, s *Source, opt *ServeOpt
 		return
 	}
 
+	if strings.HasPrefix(path, "static/") && opt.tmp {
+		mimeType := "application/octet-stream"
+
+		w.Header().Set("Content-Type", mimeType)
+
+		http.ServeFile(w, r, "/tmp/"+strings.TrimPrefix(path, "static/"))
+		return
+	}
+
 	if response == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return

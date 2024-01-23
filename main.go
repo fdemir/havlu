@@ -27,6 +27,7 @@ type ServeOptions struct {
 	port   string
 	queit  bool
 	noCors bool
+	tmp    bool
 }
 
 func read(path string) *Source {
@@ -98,12 +99,18 @@ func main() {
 				Usage:   "disable CORS headers",
 				Aliases: []string{"nc"},
 			},
+			&cli.BoolFlag{
+				Name:    "tmp-a",
+				Usage:   "access to the tmp folder",
+				Aliases: []string{"tmp"},
+			},
 		},
 		Action: func(c *cli.Context) error {
 			host := c.String("host")
 			port := c.String("port")
 			quiet := c.Bool("quiet")
 			noCors := c.Bool("no-cors")
+			tmp := c.Bool("tmp-a")
 
 			file := c.Args().First()
 
@@ -138,6 +145,7 @@ func main() {
 				port:   port,
 				queit:  quiet,
 				noCors: noCors,
+				tmp:    tmp,
 			}
 
 			serve(data, opt)

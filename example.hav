@@ -1,6 +1,7 @@
 	entity user {
 		name Person.Name
 		email Internet.Email
+		image Person.Image.Name 
 	}
 	
 	entity product {
